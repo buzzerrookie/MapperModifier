@@ -1,0 +1,7 @@
+.project
+.settings/*
+bin/*
+.classpath
+target/*
+src/test/*
+/target/

@@ -36,8 +36,8 @@ public class DomModifier {
             case Node.TEXT_NODE:
                 String text = node.getNodeValue();
                 for (Property prop : removedProps) {
-                    String regex = "[ \t]*(t1\\.)?" + Utils.camelCaseToUnderscore(prop.getName())
-                            + ".*,?[ \t]*\n";
+                    String regex = "[ \t]*(t1\\.){1}" + Utils.camelCaseToUnderscore(prop.getName())
+                            + "[ \t]*,?[ \t]*\n";
                     text = text.replaceAll(regex, "");
                 }
                 if (!removedProps.isEmpty()) {

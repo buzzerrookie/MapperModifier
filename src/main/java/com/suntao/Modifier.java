@@ -53,8 +53,8 @@ public class Modifier {
         }
         String result = "";
         try {
-            DomModifier merger = new DomModifier();
-            result = merger.modify(srcFile, removedProps, addedProps);
+            DomModifier modifier = new DomModifier();
+            result = modifier.modify(srcFile, removedProps, addedProps);
         } catch (ParserConfigurationException e) {
             e.printStackTrace();
         } catch (SAXException e) {

@@ -36,8 +36,18 @@ public class DomModifier {
             case Node.TEXT_NODE:
                 String text = node.getNodeValue();
                 for (Property prop : removedProps) {
+                    /**
+                     * 不能用String regex = "[ \t]*(t1\\.){1}" + Utils.camelCaseToUnderscore(prop.getName())
+                     *      + ".*,?[ \t]*\n";
+                     * 这样当xxx字段是另一字段子串时，点号匹配了任意字符会出问题
+                     */
+                    // 删除select语句里面的字段t1.xxx
                     String regex = "[ \t]*(t1\\.){1}" + Utils.camelCaseToUnderscore(prop.getName())
                             + "[ \t]*,?[ \t]*\n";
+                    text = text.replaceAll(regex, "");
+                    // 删除update语句里面t1.xxx  =#{dto.xxx,jdbcType=DECIMAL},
+                    regex = "[ \t]*(t1\\.){1}" + Utils.camelCaseToUnderscore(prop.getName())
+                            + "[ \t]*=.+,?[ \t]*\n";
                     text = text.replaceAll(regex, "");
                 }
                 if (!removedProps.isEmpty()) {

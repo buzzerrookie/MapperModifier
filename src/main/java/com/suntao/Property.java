@@ -15,15 +15,7 @@ public class Property {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public String getJdbcType() {
         return jdbcType;
-    }
-
-    public void setJdbcType(String jdbcType) {
-        this.jdbcType = jdbcType;
     }
 }

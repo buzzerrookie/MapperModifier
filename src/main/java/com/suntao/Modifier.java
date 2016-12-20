@@ -1,16 +1,8 @@
 package com.suntao;
 
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.xml.parsers.ParserConfigurationException;
-
-import org.xml.sax.SAXException;
 
 public class Modifier {
     private static final String USAGE_STRING = "Usage: java -jar modifier.jar <源xml文件路径> <目的xml文件路径> "
@@ -25,9 +17,24 @@ public class Modifier {
             System.err.println(USAGE_STRING);
             System.exit(-1);
         }
-        File srcFile = new File(args[0]);
         List<Property> removedProps = new ArrayList<>();
         List<Property> addedProps = new ArrayList<>();
+        parseCommand(args, removedProps, addedProps);
+        DomModifier modifier = new DomModifier(removedProps, addedProps);
+        modifier.modifyFile(new File(args[0]), new File(args[1]));
+    }
+    
+    /**
+     * 解析命令行中删除和添加的属性
+     * 
+     * @param args 命令行参数
+     * @param removedProps 要删除的属性集
+     * @param addedProps 要添加的属性集
+     * @author sunt
+     * @since 2016年12月20日
+     */
+    private static void parseCommand(String[] args, List<Property> removedProps,
+            List<Property> addedProps) {
         for (int i = 2; i < args.length;) {
             if (args[i].equals("-a")) {
                 for (int j = ++i; j < args.length; i++, j++) {
@@ -50,29 +57,6 @@ public class Modifier {
                     removedProps.add(new Property(array[0], "")); // 删除时不用管jdbcType
                 }
             }
-        }
-        String result = "";
-        try {
-            DomModifier modifier = new DomModifier();
-            result = modifier.modify(srcFile, removedProps, addedProps);
-        } catch (ParserConfigurationException e) {
-            e.printStackTrace();
-        } catch (SAXException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-            System.exit(-2);
-        }
-        File dstFile = new File(args[1]);
-        try {
-            BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(
-                    dstFile), "UTF-8"));
-            bw.write(result);
-            bw.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-            System.err.println("写文件" + args[1] + "失败");
-            System.exit(-3);
         }
     }
 }

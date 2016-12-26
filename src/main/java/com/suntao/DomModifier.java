@@ -30,18 +30,20 @@ import org.xml.sax.SAXException;
 import com.suntao.exceptions.ModifyException;
 
 public class DomModifier {
+    private final static DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
     private List<Property> removedProps;
     private List<Property> addedProps;
-    private DocumentBuilderFactory factory;
     private Document document;
+    
+    static {
+        factory.setExpandEntityReferences(false);
+        factory.setIgnoringComments(false);
+        factory.setValidating(false);
+    }
     
     public DomModifier(List<Property> removedProps, List<Property> addedProps) {
         this.removedProps = new ArrayList<>(removedProps);
         this.addedProps = new ArrayList<>(addedProps);
-        this.factory = DocumentBuilderFactory.newInstance();
-        this.factory.setExpandEntityReferences(false);
-        this.factory.setIgnoringComments(false);
-        this.factory.setValidating(false);
     }
 
     /**
@@ -86,11 +88,11 @@ public class DomModifier {
      */
     private String modify(InputStream is) throws ModifyException {
         try {
-            DocumentBuilder builder = this.factory.newDocumentBuilder();
+            DocumentBuilder builder = factory.newDocumentBuilder();
             builder.setEntityResolver(new EntityResolver() {
                 @Override
-                public InputSource resolveEntity(String publicId, String systemId) throws SAXException,
-                        IOException {
+                public InputSource resolveEntity(String publicId, String systemId)
+                        throws SAXException, IOException {
                     if (systemId.contains("mybatis-3-mapper.dtd")) {
                         // 不让联网下载dtd文件去验证xml, 否则离线的情况下不能使用
                         return new InputSource(new StringReader(""));
